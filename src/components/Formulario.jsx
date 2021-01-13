@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import useMoneda from "../hooks/useMoneda";
+import useCriptomoneda from "../hooks/useCriptomoneda";
+import Error from "./Error";
+import axios from "axios";
 
 const Boton = styled.input`
   margin-top: 20px;
@@ -19,7 +22,11 @@ const Boton = styled.input`
     cursor: pointer;
   }
 `;
-const Formulario = () => {
+const Formulario = ({ guardarMoneda, guardarCriptomoneda }) => {
+  // State del listado de criptomonedas
+  const [listacripto, guardarCriptomonedas] = useState([]);
+  const [error, guardarError] = useState(false);
+
   const MONEDAS = [
     { codigo: "USD", nombre: "Dolar de Estados Unidos" },
     { codigo: "MXN", nombre: "Peso Mexicano" },
@@ -29,10 +36,47 @@ const Formulario = () => {
 
   // Utilizar useMoneda
   const [moneda, SelectMonedas] = useMoneda("Elije tu moneda", "", MONEDAS);
+
+  // Utilizar useCriptomoneda
+  const [criptomoneda, SelectCripto] = useCriptomoneda(
+    "Elije tu criptomoneda",
+    "",
+    listacripto
+  );
+
+  // Ejecutar llamada a la API
+  useEffect(() => {
+    const consultarAPI = async () => {
+      const url =
+        "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD";
+
+      const resultado = await axios.get(url);
+      guardarCriptomonedas(resultado.data.Data);
+    };
+    consultarAPI();
+  }, []);
+
+  // Cuando el usuario hace submit
+  const cotizarMoneda = (evt) => {
+    evt.preventDefault();
+
+    // Validar si ambos campos estan llenos
+    if (moneda === "" || criptomoneda === "") {
+      guardarError(true);
+      return;
+    }
+
+    // Pasar los datos al componente principal
+    guardarError(false);
+    guardarMoneda(moneda);
+    guardarCriptomoneda(criptomoneda);
+  };
   return (
-    <form>
+    <form onSubmit={cotizarMoneda}>
+      {error ? <Error mensaje="Todos los campos son obligatorios" /> : null}
       <SelectMonedas />
-      <Boton type="submit" value="calcular" />
+      <SelectCripto />
+      <Boton type="submit" value="CALCULAR" />
     </form>
   );
 };
