@@ -6,7 +6,7 @@ import Cotizacion from "./components/Cotizacion";
 import Spinner from "./components/Spinner/Spinner";
 import axios from "axios";
 
-//Cambios
+
 const Contenedor = styled.div`
   max-width: 900px;
   margin: 0 auto;
@@ -17,6 +17,7 @@ const Contenedor = styled.div`
   }
 `;
 
+//TODO @RubenEscalante
 const Imagen = styled.img`
   max-width: 100%;
   margin-top: 5rem;
