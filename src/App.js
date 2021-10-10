@@ -6,6 +6,7 @@ import Cotizacion from "./components/Cotizacion";
 import Spinner from "./components/Spinner/Spinner";
 import axios from "axios";
 
+//Cambios
 const Contenedor = styled.div`
   max-width: 900px;
   margin: 0 auto;
